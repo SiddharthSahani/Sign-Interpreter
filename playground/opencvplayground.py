@@ -5,21 +5,26 @@ import numpy as np
 # Works but only for that event frame cant do it for all frames yet.
 # Probably need to add another loop for checking the event and adding the events at each frame
 
+# Completed ^ by doing same (added for loop for each event, might need a better solution but works for now).
+# TODO: Find a better solution for adding text to videos
+
+
 def click_event(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         print(x, y, sep="-")
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(frame, f"{x}-{y}", (x, y), font, 0.5, (255, 18, 18))
         cv2.imshow("Image", frame)
+        events.append([x,y])
 
 
 # Creating the camera
-
 cap = cv2.VideoCapture(0)
 
+events = []
 # Setting Properties
-cap.set(3, 1080)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+# cap.set(3, 1080)
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))   # ID - 3
 print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))   # ID - 4
 
@@ -27,6 +32,11 @@ print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))   # ID - 4
 while True:
     rec, frame = cap.read()
     if rec:
+
+        for i in events:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(frame, f"{i[0]}-{i[1]}", (i[0], i[1]), font, 0.5, (255, 18, 18))
+
         cv2.imshow("Image", frame)
         cv2.setMouseCallback("Image", click_event)
 
