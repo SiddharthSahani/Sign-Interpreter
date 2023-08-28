@@ -5,5 +5,7 @@
     <mapping directory="$PROJECT_DIR$/playground/opencv-python" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/playground/opencv-python/multibuild" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/playground/opencv-python/opencv" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/playground/opencv-python/opencv_contrib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/playground/opencv-python/opencv_extra" vcs="Git" />
   </component>
 </project>
