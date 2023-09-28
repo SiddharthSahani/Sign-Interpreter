@@ -1,24 +1,22 @@
-import cv2
 
+import cv2
 from cvzone.HandTrackingModule import HandDetector
 from cvzone.ClassificationModule import Classifier
 import numpy as np
 import math
-import time
 
 
 cap = cv2.VideoCapture(0)
-detector =HandDetector(maxHands=2)
-classifier = Classifier("Model/Keras_model.h5","Model/labels.txt")
+detector = HandDetector(maxHands=2)
+classifier = Classifier("Keras_model.h5","labels.txt")
 offset = 20
 imgSize = 300
 
-folder = "data/OK"
-counter = 0
 
-labels =["A","B","C","D","E","HI","OK"]     #LETTING THE system know the values
+labels = ["A", "B", "C", "D", "E", "HI", "OK"]     #LETTING THE system know the values
 
-while True:
+
+while cv2.waitKey(1) != 27:
     success,img = cap.read()
     imgOutput = img.copy()
     hands, img = detector.findHands(img)
@@ -31,9 +29,9 @@ while True:
 
 
         imageCropShape = imgCrop.shape
-#height of the image setting
         aspectRatio = h / w
 
+        #height of the image setting
         if aspectRatio > 1:
             k = imgSize / h
             wCal = math.ceil(k * w)
@@ -43,9 +41,6 @@ while True:
             imgSpiderman[:,wGap:wCal+wGap] = imgResize
             prediction, index = classifier.getPrediction(imgSpiderman)
             print(prediction,index)
-
-
-
 
         #for setting up the width
         else:
@@ -64,4 +59,3 @@ while True:
 
 
     cv2.imshow("Image",imgOutput)
-    key = cv2.waitKey(1)
