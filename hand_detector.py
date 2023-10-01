@@ -43,7 +43,10 @@ class HandDetector:
         box_w = x_max - x_min
         box_h = y_max - y_min
 
-        bbox = (x_min, y_min, box_w, box_h)
+        bbox = (
+            int(x_min), int(y_min),
+            int(box_w), int(box_h)
+        )
         return bbox, (lm_x_list, lm_y_list)
 
 
