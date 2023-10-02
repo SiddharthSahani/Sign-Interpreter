@@ -14,7 +14,7 @@ def load_dataset():
 
     detector = HandDetector()
 
-    NUM_IMAGES_PER_CLASS = 100
+    NUM_IMAGES_PER_CLASS = 500
     
     train_inputs = np.empty((NUM_IMAGES_PER_CLASS*len(classes), 42))
     train_outputs = np.empty(NUM_IMAGES_PER_CLASS*len(classes))
@@ -42,25 +42,34 @@ def load_dataset():
 
 # takes too much time, so cache it somewhere with np.save
 # and then load with np.load
+
+## Comment these 5 lines after first run (unless u get an error)
 X, Y, bad = load_dataset()
 X = np.delete(X, bad, axis=0)
 Y = np.delete(Y, bad, axis=0)
+np.save("fast-x.npy", X)
+np.save("fast-y.npy", Y)
+
+X = np.load("fast-x.npy")
+Y = np.load("fast-y.npy")
 
 ## MAKE YOUR OWN MODEL
 model = Sequential()
 
-model.add(Dense(60, input_shape=(42,), activation="relu"))
-model.add(Dense(60, activation="relu"))
+model.add(Dense(80, input_shape=(42,), activation="relu"))
+model.add(Dense(80, activation="relu"))
 model.add(Dense(27, activation="softmax"))
 
 ## TRY TO MAKE THE LOSS AS LOW AS POSSIBLE
-model.compile(loss=keras.losses.CategoricalCrossentropy(), metrics=["accuracy"])
+model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 model.fit(X, Y, epochs=10)
 
 
 classes = ["space"] + list(chr(i) for i in range(65, 91))
 
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1080)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 det = HandDetector()
 
 while cv2.waitKey(1) != 27:
@@ -70,11 +79,13 @@ while cv2.waitKey(1) != 27:
     if res:
         _, (x_lms, y_lms) = res
         input_data = np.array(x_lms + y_lms)
-        if len(input_data) != 42:
-            continue
 
-        prediction = model.predict(np.expand_dims(input_data, axis=0))
-        pred_idx = np.argmax(prediction)
-        cv2.putText(image, classes[pred_idx], (10, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (255, 0, 0))
+        if np.min(input_data) >= 0 and np.max(input_data) <= 1:
+            prediction = model.predict(np.expand_dims(input_data, axis=0))
+            pred_idx = np.argmax(prediction)
+            cv2.putText(image, classes[pred_idx], (10, 50), cv2.FONT_HERSHEY_COMPLEX, 2, (255, 0, 0))
+
+            for i in range(27):
+                cv2.putText(image, f"{classes[i]}: {prediction[0][i]:.3f}", (10, 70 + i*20), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 255))
 
     cv2.imshow("image", image)
