@@ -6,9 +6,9 @@ import cv2
 import numpy as np
 
 
-preprocessesed_n = 500
-X = np.load("processed-dataset/processed-x-{preprocessed_n}.npy")
-Y = np.load("processed-dataset/processed-y-{preprocessed_n}.npy")
+train_input_size = 500
+X = np.load(f"processed-dataset/processed-x-{train_input_size}.npy")
+Y = np.load(f"processed-dataset/processed-y-{train_input_size}.npy")
 
 ## MAKE YOUR OWN MODEL
 model = Sequential()
